@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../screens/profile.dart';
 import '../screens/all_tasks.dart'; 
 
@@ -23,6 +24,118 @@ class _MainPageState extends State<MainPage> {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  // Состояние для ввода текста новой задачи
+  String _newTaskText = '';
+  String _newTaskDescription = '';
+  DateTime _newTaskDeadline = DateTime.now();
+
+  // Функция для показа диалогового окна
+  void _showAddTaskDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog( // Используем Dialog вместо AlertDialog
+          child: Container( // Добавляем Container для ограничения ширины
+            width: 400, // Устанавливаем минимальную ширину
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min, // Сжимаем высоту диалога
+              children: [
+                TextField(
+                  decoration: const InputDecoration(hintText: 'Введите задачу'),
+                  onChanged: (value) {
+                    setState(() {
+                      _newTaskText = value;
+                    });
+                  },
+                ),
+                const SizedBox(height: 16), // Отступ между полями
+                TextField(
+                  decoration: const InputDecoration(hintText: 'Описание'),
+                  onChanged: (value) {
+                    setState(() {
+                      _newTaskDescription = value;
+                    });
+                  },
+                ),
+                const SizedBox(height: 16), // Отступ между полями
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () async {
+                          // Вызываем диалог выбора даты и времени
+                          DateTime? pickedDateTime = await showDatePicker(
+                            context: context,
+                            initialDate: _newTaskDeadline,
+                            firstDate: DateTime.now(),
+                            lastDate: DateTime.now().add(const Duration(days: 365)),
+                          );
+
+                          if (pickedDateTime != null) {
+                            // Вызываем диалог выбора времени
+                            TimeOfDay? pickedTime = await showTimePicker(
+                              context: context,
+                              initialTime: TimeOfDay.fromDateTime(_newTaskDeadline),
+                            );
+
+                            if (pickedTime != null) {
+                              setState(() {
+                                _newTaskDeadline = DateTime(
+                                  pickedDateTime.year,
+                                  pickedDateTime.month,
+                                  pickedDateTime.day,
+                                  pickedTime.hour,
+                                  pickedTime.minute,
+                                );
+                              });
+                            }
+                          }
+                        },
+                        child: Text(
+                          'Дедлайн: ${DateFormat('dd.MM.yy HH:mm').format(_newTaskDeadline)}',
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24), // Отступ между полями и кнопками
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end, // Кнопки справа
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(); // Закрываем диалоговое окно
+                      },
+                      child: const Text('Отмена'),
+                    ),
+                    const SizedBox(width: 16), // Отступ между кнопками
+                    TextButton(
+                      onPressed: () {
+                        if (_newTaskText.isNotEmpty) {
+                          // Добавляем задачу в список
+                          // ... (реализуйте логику добавления задачи)
+                          setState(() {
+                            // ...
+                            _newTaskText = ''; // Очищаем поле ввода
+                            _newTaskDescription = ''; // Очищаем поле ввода
+                            _newTaskDeadline = DateTime.now(); // Сбрасываем дедлайн
+                          });
+                        }
+                        Navigator.of(context).pop(); // Закрываем диалоговое окно
+                      },
+                      child: const Text('Добавить'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -72,6 +185,10 @@ class _MainPageState extends State<MainPage> {
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _showAddTaskDialog,
+        child: const Icon(Icons.add),
       ),
     );
   }
