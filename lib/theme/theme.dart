@@ -18,6 +18,19 @@ class TaskManagerTheme {
         borderRadius: BorderRadius.all(Radius.circular(20)),
       ),
     ),
+     // Добавляем тему для BottomNavigationBar
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      backgroundColor:  Color(0xFF4ceb8b), // Цвет фона
+      selectedItemColor: Color(0xFFffd389), // Основной цвет для выбранных иконок
+      unselectedItemColor: Colors.grey, // Серый цвет для неактивных иконок
+      showUnselectedLabels: true, // Показывать текст для неактивных иконок
+      selectedLabelStyle: TextStyle(
+        fontWeight: FontWeight.bold,
+      ), // Стиль текста для выбранных иконок
+      unselectedLabelStyle: TextStyle(
+        fontWeight: FontWeight.normal,
+      ), // Стиль текста для неактивных иконок
+    ),
     // ...
   );
 }
