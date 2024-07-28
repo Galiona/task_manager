@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:task_manager/screens/profile.dart'; // Импортируем ProfilePage
+import '../screens/profile.dart';
+import '../screens/all_tasks.dart'; 
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -12,10 +13,10 @@ class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
 
   static const List<Widget> _widgetOptions = <Widget>[
-    Text('Задачи'),
+    TaskPage(),
     Text('Сегодня'),
     Text('Выполнено'),
-    Text('Профиль'),
+    ProfilePage(),
   ];
 
   void _onItemTapped(int index) {
