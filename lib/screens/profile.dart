@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:task_manager/services/firebase_auth.dart';
 import '../pages/login_page.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -10,64 +10,103 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  // Заменяем Firebase Authentication на логику из LoginPage
-  String? userEmail = 'test@example.com'; // Тестовое значение
-  bool isEmailVerified = false; // Тестовое значение
+  // Получаем данные пользователя из AuthService
+  final AuthService _authService = AuthService();
+  String? userEmail;
+  bool isEmailVerified = false;
+  String? userAvatarUrl;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Получаем текущего пользователя
+    final user = _authService.currentUser; 
+
+    // Если пользователь не равен null, обновляем состояние
+    if (user != null) {
+      setState(() {
+        userEmail = user.email;
+        isEmailVerified = user.emailVerified;
+        userAvatarUrl = user.photoURL; // Получаем URL аватара
+      });
+    } else {
+      // Если пользователя нет, устанавливаем значения по умолчанию
+      setState(() {
+        userEmail = null;
+        isEmailVerified = false;
+        userAvatarUrl = null;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Аватар
-            CircleAvatar(
-              radius: 50,
-              backgroundImage: AssetImage(
-                'assets/avatar.jpg', // Замените на URL аватара пользователя
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // Почта
-            Text(
-              userEmail ?? 'Неизвестно',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-
-            // Кнопка подтверждения почты
-            if (!isEmailVerified)
-              ElevatedButton(
-                onPressed: () {
-                  // Заменяем отправку письма на показ SnackBar
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Письмо с подтверждением отправлено!')),
-                  );
-                  setState(() {
-                    isEmailVerified = true; // Тестовое подтверждение
-                  });
-                },
-                child: const Text('Отправить запрос подтверждения'),
-              ),
-            const SizedBox(height: 20),
-
-            // Кнопка выхода
-            ElevatedButton(
-              onPressed: () {
-                // Переход на страницу входа
-                Navigator.pushReplacement(context, 
-                MaterialPageRoute(builder: (context) {
-                return LoginPage();
-                }));
-              },
-              child: const Text('Выйти'),
-            ),
-          ],
+    return 
+     Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Theme.of(context).colorScheme.secondary,
+              Theme.of(context).colorScheme.primary,
+            ],
+            stops: const [0.1, 0.9], // 90% primary, 10% secondary
+          ),
         ),
-      
-    );
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Аватар
+                CircleAvatar(
+                  radius: 50,
+                  backgroundImage: userAvatarUrl != null
+                      ? NetworkImage(userAvatarUrl!) // Используем URL аватара
+                      : AssetImage('assets/avatar.jpg'), // Используем дефолтный аватар
+                ),
+                const SizedBox(height: 20),
+
+                // Почта
+                Text(
+                  userEmail ?? 'Неизвестно',
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                ),
+                const SizedBox(height: 10),
+
+                // Кнопка подтверждения почты
+                if (!isEmailVerified)
+                  ElevatedButton(
+                    onPressed: () {
+                      // Отправляем запрос подтверждения почты
+                      _authService.sendEmailVerification();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Письмо с подтверждением отправлено!')),
+                      );
+                    },
+                    child: const Text('Подтверждение почты'),
+                  ),
+                const SizedBox(height: 20),
+
+                // Кнопка выхода
+                ElevatedButton(
+                  onPressed: () {
+                    // Выход из аккаунта
+                    _authService.signOut().then((_) {
+                      // Переход на страницу входа
+                      Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (context) => const LoginPage()));
+                    });
+                  },
+                  child: const Text('Выйти'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
   }
 }

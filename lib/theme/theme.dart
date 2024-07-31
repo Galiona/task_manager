@@ -22,7 +22,7 @@ class TaskManagerTheme {
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       backgroundColor:  Color(0xFF4ceb8b), // Цвет фона
       selectedItemColor: Color(0xFFffd389), // Основной цвет для выбранных иконок
-      unselectedItemColor: Colors.grey, // Серый цвет для неактивных иконок
+      unselectedItemColor: Color(0xFF2c7248), // Серый цвет для неактивных иконок
       showUnselectedLabels: true, // Показывать текст для неактивных иконок
       selectedLabelStyle: TextStyle(
         fontWeight: FontWeight.bold,

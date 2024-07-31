@@ -1,58 +1,70 @@
 plugins {
-    id "com.android.application"
-    id "kotlin-android"
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
-    id "dev.flutter.flutter-gradle-plugin"
+    id "com.android.application" // Плагин для создания Android-приложений
+    id "kotlin-android" // Плагин для использования Kotlin в Android-проекте
+    // Плагин Flutter Gradle должен быть применен после плагинов Android и Kotlin
+    id "dev.flutter.flutter-gradle-plugin" // Плагин Flutter Gradle
 }
 
-def localProperties = new Properties()
-def localPropertiesFile = rootProject.file("local.properties")
-if (localPropertiesFile.exists()) {
-    localPropertiesFile.withReader("UTF-8") { reader ->
-        localProperties.load(reader)
+def localProperties = new Properties() // Создание объекта Properties
+def localPropertiesFile = rootProject.file("local.properties") // Получение файла local.properties
+if (localPropertiesFile.exists()) { // Проверка существования файла
+    localPropertiesFile.withReader("UTF-8") { reader -> // Чтение файла с кодировкой UTF-8
+        localProperties.load(reader) // Загрузка свойств из файла
     }
 }
 
-def flutterVersionCode = localProperties.getProperty("flutter.versionCode")
-if (flutterVersionCode == null) {
-    flutterVersionCode = "1"
+def flutterVersionCode = localProperties.getProperty("flutter.versionCode") // Получение значения flutter.versionCode из файла local.properties
+if (flutterVersionCode == null) { // Проверка, установлено ли значение flutter.versionCode
+    flutterVersionCode = "1" // Установка значения по умолчанию
 }
 
-def flutterVersionName = localProperties.getProperty("flutter.versionName")
-if (flutterVersionName == null) {
-    flutterVersionName = "1.0"
+def flutterVersionName = localProperties.getProperty("flutter.versionName") // Получение значения flutter.versionName из файла local.properties
+if (flutterVersionName == null) { // Проверка, установлено ли значение flutter.versionName
+    flutterVersionName = "1.0" // Установка значения по умолчанию
 }
 
 android {
-    namespace = "com.example.task_manager"
-    compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    namespace = "com.example.task_manager" // Пространство имен приложения
+    compileSdk = flutter.compileSdkVersion // Версия SDK для компиляции
+    ndkVersion = flutter.ndkVersion // Версия NDK
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_1_8 // Версия Java для компиляции
+        targetCompatibility = JavaVersion.VERSION_1_8 // Версия Java для запуска
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.task_manager"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
-        versionCode = flutterVersionCode.toInteger()
-        versionName = flutterVersionName
+        // TODO: Укажите свой уникальный идентификатор приложения (https://developer.android.com/studio/build/application-id.html). // Укажите свой уникальный идентификатор приложения
+        applicationId = "com.example.task_manager" // Идентификатор приложения
+        // Вы можете обновить следующие значения в соответствии с потребностями вашего приложения. // Вы можете обновить следующие значения в соответствии с потребностями вашего приложения
+        // Дополнительная информация: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration. // Дополнительная информация: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
+        // minSdk = flutter.minSdkVersion // Минимальная версия SDK
+        minSdkVersion 23 // Минимальная версия SDK
+        targetSdk = flutter.targetSdkVersion // Целевая версия SDK
+        versionCode = flutterVersionCode.toInteger() // Номер версии приложения
+        versionName = flutterVersionName // Имя версии приложения
     }
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.debug
+            // TODO: Добавьте свою собственную конфигурацию подписи для сборки выпуска. // Добавьте свою собственную конфигурацию подписи для сборки выпуска
+            // Подпись с помощью отладочных ключей на данный момент, чтобы `flutter run --release` работал. // Подпись с помощью отладочных ключей на данный момент, чтобы `flutter run --release` работал
+            signingConfig = signingConfigs.debug // Использование отладочных ключей для подписи
         }
     }
+        dependencies {
+        constraints {
+            implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0") {
+                because("kotlin-stdlib-jdk7 is now a part of kotlin-stdlib")
+            }
+            implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.0") {
+                because("kotlin-stdlib-jdk8 is now a part of kotlin-stdlib")
+            }
+        }
+    }
+    
 }
 
 flutter {
-    source = "../.."
+    source = "../.." // Путь к проекту Flutter
 }

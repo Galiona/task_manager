@@ -14,7 +14,7 @@ class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
 
   static const List<Widget> _widgetOptions = <Widget>[
-    TaskPage(),
+    TasksPage(),
     Text('Сегодня'),
     Text('Выполнено'),
     ProfilePage(),
@@ -186,10 +186,12 @@ class _MainPageState extends State<MainPage> {
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _showAddTaskDialog,
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: _selectedIndex != 3 // Проверяем, не выбран ли "Профиль"
+          ? FloatingActionButton(
+              onPressed: _showAddTaskDialog,
+              child: const Icon(Icons.add),
+            )
+          : null, // Если "Профиль" выбран, не отображаем кнопку
     );
   }
 }
